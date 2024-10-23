@@ -1,5 +1,3 @@
----
-
 # 🖼️ Image Converter & Compressor App
 
 This is a **Streamlit** web application that allows users to **convert images** between various formats and **compress images** by resizing them. The app provides an easy-to-use interface for image conversions and compression, ensuring that users can download their converted or compressed images in a few clicks.
@@ -27,6 +25,55 @@ This is a **Streamlit** web application that allows users to **convert images** 
 
 ---
 
+## How to Install Docker
+
+To run the app using Docker, you first need to install Docker on your machine. Follow these steps:
+
+### Windows & macOS
+
+1. **Download Docker Desktop**:
+   - Visit the [Docker Desktop download page](https://www.docker.com/products/docker-desktop).
+   - Download the appropriate version for your operating system.
+
+2. **Install Docker Desktop**:
+   - Follow the installation instructions on the website.
+   - Once installed, run Docker Desktop.
+
+3. **Verify Docker Installation**:
+   - Open a terminal (Command Prompt, PowerShell, or Terminal).
+   - Run the following command to check if Docker is installed correctly:
+     ```bash
+     docker --version
+     ```
+
+### Linux
+
+1. **Install Docker**:
+   - Open a terminal and run the following commands based on your distribution:
+
+   **For Ubuntu**:
+   ```bash
+   sudo apt update
+   sudo apt install docker.io
+   ```
+
+   **For CentOS**:
+   ```bash
+   sudo yum install docker
+   ```
+
+2. **Start Docker**:
+   ```bash
+   sudo systemctl start docker
+   ```
+
+3. **Verify Docker Installation**:
+   ```bash
+   docker --version
+   ```
+
+---
+
 ## How to Run the App Locally
 
 ### 1. Clone the Repository
@@ -36,7 +83,7 @@ git clone https://github.com/Rohitb0304/imageconverter.git
 cd imageconverter
 ```
 
-### 2. Create Virtual Environment
+### 2. Create a Virtual Environment
 
 It's recommended to use a virtual environment to manage dependencies:
 
@@ -128,28 +175,6 @@ image-converter-compressor-app/
 
 ---
 
-## Deployment on Render
-
-You can deploy this app to Render easily by following these steps:
-
-1. Push the repository to GitHub or another version control system.
-2. Log in to [Render](https://render.com/) and connect the repository.
-3. Add a new **Web Service** in Render and select the repository.
-4. Use the following build and start commands:
-   - Build Command: `docker build -t image-converter-app .`
-   - Start Command: `docker run -p 8501:8501 image-converter-app`
-5. Deploy and access your app via the generated URL!
-
----
-
-## Future Improvements
-
-- Add more compression options (e.g., JPEG quality control).
-- Support for image rotation and cropping.
-- Implement batch image compression with ZIP download.
-
----
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -160,8 +185,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For any questions or suggestions, feel free to contact:
 
-**Your Name** - [rohitb.0304@gmail.com](mailto:rohitb.0304@gmail.com)
-
----
-
-This **README** provides all the necessary details to run and deploy the project, along with usage instructions, examples, and project structure. Let me know if you need further modifications!
+**Rohit Rajratna Bansode** - [rohitb.0304@gmail.com](mailto:rohitb.0304@gmail.com)
