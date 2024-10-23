@@ -3,6 +3,7 @@ from PIL import Image
 import streamlit as st
 import tempfile
 from zipfile import ZipFile
+import pyheif  # Import pyheif for HEIC support
 
 # Supported formats for conversion
 IMAGE_FORMATS = {
@@ -11,23 +12,42 @@ IMAGE_FORMATS = {
     "JPEG": "jpeg",
     "BMP": "bmp",
     "GIF": "gif",
-    "TIFF": "tiff"
+    "TIFF": "tiff",
+    "HEIC": "heic"  # Added HEIC support
 }
+
+# Helper function to convert HEIC to other formats
+def convert_heic_to_image(input_file, output_format):
+    heif_file = pyheif.read(input_file)
+    image = Image.frombytes(
+        heif_file.mode,
+        heif_file.size,
+        heif_file.data,
+        heif_file.stride,
+    )
+    return image
 
 # Helper function to convert images to another format
 def convert_image_format(input_file, output_format):
-    image = Image.open(input_file)
+    # Check if input file is HEIC
+    if input_file.type == "image/heic":
+        image = convert_heic_to_image(input_file, output_format)
+    else:
+        image = Image.open(input_file)
+
+    original_filename = os.path.splitext(input_file.name)[0]
     converted_file = tempfile.NamedTemporaryFile(suffix=f".{output_format}", delete=False)
     image.save(converted_file.name, output_format.upper())
-    return converted_file.name
+    return converted_file.name, f"{original_filename}_converted.{output_format}"
 
 # Helper function to compress images (resize)
 def compress_image(input_file, resize_dimensions):
     image = Image.open(input_file)
+    original_filename = os.path.splitext(input_file.name)[0]
     compressed_file = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
     image = image.resize(resize_dimensions)
     image.save(compressed_file.name, "PNG")
-    return compressed_file.name
+    return compressed_file.name, f"{original_filename}_compressed.png"
 
 # Streamlit app with improved styling and logic
 def main():
@@ -61,7 +81,7 @@ def main():
         uploaded_file = st.file_uploader(
             "Upload image for compression", 
             type=list(IMAGE_FORMATS.values()), 
-            help="Supported formats: PNG, JPG, JPEG, BMP, GIF, TIFF"
+            help="Supported formats: PNG, JPG, JPEG, BMP, GIF, TIFF, HEIC"
         )
 
         # Input fields for resizing dimensions
@@ -75,14 +95,14 @@ def main():
 
             # Compress and download button
             if st.button("🗜️ Compress Image"):
-                compressed_file = compress_image(uploaded_file, resize_dimensions)
+                compressed_file, compressed_name = compress_image(uploaded_file, resize_dimensions)
 
                 # Download button for compressed image
                 with open(compressed_file, "rb") as file:
                     st.download_button(
                         label="📥 Download Compressed Image",
                         data=file,
-                        file_name="compressed_image.png",
+                        file_name=compressed_name,
                         mime="image/png"
                     )
 
@@ -102,7 +122,7 @@ def main():
             "Upload images for conversion", 
             accept_multiple_files=True, 
             type=list(IMAGE_FORMATS.values()), 
-            help="Supported formats: PNG, JPG, JPEG, BMP, GIF, TIFF"
+            help="Supported formats: PNG, JPG, JPEG, BMP, GIF, TIFF, HEIC"
         )
 
         # Select output format
@@ -114,14 +134,14 @@ def main():
                 with tempfile.TemporaryDirectory() as tmp_dir:
                     converted_files = []
                     for uploaded_file in uploaded_files:
-                        output_file = convert_image_format(uploaded_file, IMAGE_FORMATS[output_format])
-                        converted_files.append(output_file)
+                        output_file, converted_name = convert_image_format(uploaded_file, IMAGE_FORMATS[output_format])
+                        converted_files.append((output_file, converted_name))
 
                     # Zip all converted images
                     zip_path = os.path.join(tmp_dir, "converted_images.zip")
                     with ZipFile(zip_path, 'w') as zipf:
-                        for file in converted_files:
-                            zipf.write(file, os.path.basename(file))
+                        for file, name in converted_files:
+                            zipf.write(file, name)
 
                     # Download button for ZIP file
                     with open(zip_path, "rb") as zipf:
