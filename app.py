@@ -4,6 +4,7 @@ import streamlit as st
 import tempfile
 from zipfile import ZipFile
 import pyheif
+import time  # Import time for simulating the upload delay
 
 # Supported formats for conversion
 IMAGE_FORMATS = {
@@ -150,12 +151,19 @@ def main():
         # Convert images and zip them
         if uploaded_files and output_format:
             if st.button("🔄 Convert Images"):
+                progress_bar = st.progress(0)  # Initialize progress bar
+                total_files = len(uploaded_files)
+                converted_files = []
+
                 with tempfile.TemporaryDirectory() as tmp_dir:
-                    converted_files = []
-                    for uploaded_file in uploaded_files:
+                    for i, uploaded_file in enumerate(uploaded_files):
                         output_file, converted_name = convert_image_format(uploaded_file, IMAGE_FORMATS[output_format])
                         if output_file:  # Check if the conversion was successful
                             converted_files.append((output_file, converted_name))
+
+                        # Update progress bar
+                        progress = (i + 1) / total_files
+                        progress_bar.progress(progress)  # Update progress bar
 
                     # Zip all converted images
                     zip_path = os.path.join(tmp_dir, "converted_images.zip")
