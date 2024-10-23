@@ -1,5 +1,5 @@
-# Start from the official Python image
-FROM python:3.9-slim
+# Start from the official Python 3.10 image
+FROM python:3.10-slim
 
 # Install system dependencies for libheif
 RUN apt-get update && apt-get install -y \
@@ -21,4 +21,4 @@ COPY . .
 EXPOSE 8501
 
 # Run the Streamlit app
-CMD ["streamlit", "run", "your_script.py"]  # Replace with your Streamlit app file
+CMD ["streamlit", "run", "app.py"]  # Replace with your Streamlit app file
