@@ -32,8 +32,8 @@ This is a **Streamlit** web application that allows users to **convert images** 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-repo/image-converter-compressor-app.git
-cd image-converter-compressor-app
+git clone https://github.com/Rohitb0304/imageconverter.git
+cd imageconverter
 ```
 
 ### 2. Create Virtual Environment
