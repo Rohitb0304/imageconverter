@@ -21,4 +21,4 @@ COPY . .
 EXPOSE 8501
 
 # Run the Streamlit app
-CMD ["streamlit", "run", "app.py"]  # Replace with your Streamlit app file
+CMD ["streamlit", "run", "app.py"]
