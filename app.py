@@ -77,11 +77,14 @@ def main():
             """, unsafe_allow_html=True
         )
 
-        # Upload image for compression
+        # Select input image type for compression
+        input_format = st.selectbox("🎨 Select Input Image Type", list(IMAGE_FORMATS.keys()))
+        
+        # Upload image for compression based on selected format
         uploaded_file = st.file_uploader(
             "Upload image for compression", 
-            type=list(IMAGE_FORMATS.values()), 
-            help="Supported formats: PNG, JPG, JPEG, BMP, GIF, TIFF, HEIC"
+            type=IMAGE_FORMATS[input_format], 
+            help="Supported format: " + input_format
         )
 
         # Input fields for resizing dimensions
@@ -95,7 +98,8 @@ def main():
 
             # Compress and download button
             if st.button("🗜️ Compress Image"):
-                compressed_file, compressed_name = compress_image(uploaded_file, resize_dimensions)
+                with st.spinner("Compressing image..."):
+                    compressed_file, compressed_name = compress_image(uploaded_file, resize_dimensions)
 
                 # Download button for compressed image
                 with open(compressed_file, "rb") as file:
@@ -117,15 +121,15 @@ def main():
             """, unsafe_allow_html=True
         )
 
-        # Select input image type
+        # Select input image type for conversion
         input_format = st.selectbox("🎨 Select Input Image Type", list(IMAGE_FORMATS.keys()))
-
-        # Upload image for conversion
+        
+        # Upload image for conversion based on selected format
         uploaded_files = st.file_uploader(
             "Upload images for conversion", 
             accept_multiple_files=True, 
-            type=list(IMAGE_FORMATS.values()), 
-            help="Supported formats: PNG, JPG, JPEG, BMP, GIF, TIFF, HEIC"
+            type=IMAGE_FORMATS[input_format], 
+            help="Supported format: " + input_format
         )
 
         # Select output format
@@ -134,26 +138,27 @@ def main():
         # Convert images and zip them
         if uploaded_files and output_format:
             if st.button("🔄 Convert Images"):
-                with tempfile.TemporaryDirectory() as tmp_dir:
-                    converted_files = []
-                    for uploaded_file in uploaded_files:
-                        output_file, converted_name = convert_image_format(uploaded_file, IMAGE_FORMATS[output_format])
-                        converted_files.append((output_file, converted_name))
+                with st.spinner("Converting images..."):
+                    with tempfile.TemporaryDirectory() as tmp_dir:
+                        converted_files = []
+                        for uploaded_file in uploaded_files:
+                            output_file, converted_name = convert_image_format(uploaded_file, IMAGE_FORMATS[output_format])
+                            converted_files.append((output_file, converted_name))
 
-                    # Zip all converted images
-                    zip_path = os.path.join(tmp_dir, "converted_images.zip")
-                    with ZipFile(zip_path, 'w') as zipf:
-                        for file, name in converted_files:
-                            zipf.write(file, name)
+                        # Zip all converted images
+                        zip_path = os.path.join(tmp_dir, "converted_images.zip")
+                        with ZipFile(zip_path, 'w') as zipf:
+                            for file, name in converted_files:
+                                zipf.write(file, name)
 
-                    # Download button for ZIP file
-                    with open(zip_path, "rb") as zipf:
-                        st.download_button(
-                            label="📁 Download All Converted Images (ZIP)",
-                            data=zipf,
-                            file_name="converted_images.zip",
-                            mime="application/zip"
-                        )
+                        # Download button for ZIP file
+                        with open(zip_path, "rb") as zipf:
+                            st.download_button(
+                                label="📁 Download All Converted Images (ZIP)",
+                                data=zipf,
+                                file_name="converted_images.zip",
+                                mime="application/zip"
+                            )
 
 if __name__ == "__main__":
     main()
