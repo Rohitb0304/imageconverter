@@ -13,11 +13,11 @@ IMAGE_FORMATS = {
     "BMP": "bmp",
     "GIF": "gif",
     "TIFF": "tiff",
-    "HEIC": "heic"  # Added HEIC support
+    "HEIC": "heic"
 }
 
 # Helper function to convert HEIC to other formats
-def convert_heic_to_image(input_file, output_format):
+def convert_heic_to_image(input_file):
     heif_file = pyheif.read(input_file)
     image = Image.frombytes(
         heif_file.mode,
@@ -31,7 +31,7 @@ def convert_heic_to_image(input_file, output_format):
 def convert_image_format(input_file, output_format):
     # Check if input file is HEIC
     if input_file.type == "image/heic":
-        image = convert_heic_to_image(input_file, output_format)
+        image = convert_heic_to_image(input_file)
     else:
         image = Image.open(input_file)
 
@@ -117,6 +117,9 @@ def main():
             """, unsafe_allow_html=True
         )
 
+        # Select input image type
+        input_format = st.selectbox("🎨 Select Input Image Type", list(IMAGE_FORMATS.keys()))
+
         # Upload image for conversion
         uploaded_files = st.file_uploader(
             "Upload images for conversion", 
@@ -126,7 +129,7 @@ def main():
         )
 
         # Select output format
-        output_format = st.selectbox("🎨 Select output format", list(IMAGE_FORMATS.keys()))
+        output_format = st.selectbox("🖌️ Select Output Format", list(IMAGE_FORMATS.keys()))
 
         # Convert images and zip them
         if uploaded_files and output_format:
